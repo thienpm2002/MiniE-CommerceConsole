@@ -6,8 +6,7 @@ public class User {
     private String email;
     private double balance;
 
-    public User(Long id, String name, String email, double balance) {
-        this.id = id;
+    public User(String name, String email, double balance) {
         this.name = name;
         this.email = email;
         if (balance < 0) {
@@ -18,6 +17,13 @@ public class User {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID must be a positive number");
+        }
+        this.id = id;
     }
 
     public String getName() {
