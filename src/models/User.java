@@ -9,9 +9,6 @@ public class User {
     public User(String name, String email, double balance) {
         this.name = name;
         this.email = email;
-        if (balance < 0) {
-            throw new IllegalArgumentException("Balance cannot be negative");
-        }
         this.balance = balance;
     }
 
@@ -46,5 +43,12 @@ public class User {
             throw new IllegalStateException("Balance cannot be negative");
         }
         balance -= amount;
+    }
+
+    public void deposit(double amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Amount cannot be negative");
+        }
+        balance += amount;
     }
 }
