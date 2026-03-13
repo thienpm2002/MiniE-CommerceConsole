@@ -1,5 +1,6 @@
 package services;
 
+import exceptions.UserExistException;
 import models.User;
 import repositories.UserRepository;
 import utils.UserUtil;
@@ -17,6 +18,9 @@ public class UserService {
         }
         if (!UserUtil.isValidEmail(email)) {
             throw new IllegalArgumentException("Invalid email format.");
+        }
+        if (userRepository.existsByEmail(email)) {
+            throw new UserExistException("Email already exists. Please use a different email.");
         }
         if (balance < 0) {
             throw new IllegalArgumentException("Balance cannot be negative.");
