@@ -1,6 +1,7 @@
 package services;
 
 import exceptions.UserExistException;
+import exceptions.UserNotFoundException;
 import models.User;
 import repositories.UserRepository;
 import utils.UserUtil;
@@ -27,5 +28,13 @@ public class UserService {
         }
         User user = new User(name, email, balance);
         userRepository.save(user);
+    }
+
+    public User loginUser(String email) {
+        if (!UserUtil.isValidEmail(email)) {
+            throw new IllegalArgumentException("Invalid email format.");
+        }
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found with the provided email."));
     }
 }
