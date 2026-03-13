@@ -2,6 +2,7 @@ package repositories;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.HashMap;
 
 import models.User;
@@ -37,5 +38,11 @@ public class UserRepository implements RepositoryInterface<Long, User> {
     public boolean existsByEmail(String email) {
         return userDatabase.values().stream()
                 .anyMatch(user -> user.getEmail().equalsIgnoreCase(email));
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userDatabase.values().stream()
+                .filter(user -> user.getEmail().equalsIgnoreCase(email))
+                .findFirst();
     }
 }
