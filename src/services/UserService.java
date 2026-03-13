@@ -37,4 +37,11 @@ public class UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found with the provided email."));
     }
+
+    public void depositMoney(User user, double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Deposit amount must be greater than zero.");
+        }
+        user.deposit(amount);
+    }
 }

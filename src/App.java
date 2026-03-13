@@ -60,6 +60,16 @@ public class App {
 
                                 case 1:
                                     // Code to deposit money
+                                    System.out.print("Enter amount to deposit: ");
+                                    double amount = sc.nextDouble();
+                                    sc.nextLine();
+                                    try {
+                                        userService.depositMoney(user, amount);
+                                        System.out.println(
+                                                "Deposit successful! Your new balance is: $" + user.getBalance());
+                                    } catch (IllegalArgumentException e) {
+                                        System.out.println(e.getMessage());
+                                    }
                                     break;
                                 case 2:
                                     // Code to view products
