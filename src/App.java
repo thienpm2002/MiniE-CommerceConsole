@@ -1,5 +1,6 @@
 import java.util.Scanner;
 
+import exceptions.UserExistException;
 import services.UserService;
 
 public class App {
@@ -28,7 +29,9 @@ public class App {
                         userService.registerUser(name, email, balance);
                         System.out.println("User registered successfully!");
                     } catch (IllegalArgumentException e) {
-                        System.out.println("Error: " + e.getMessage());
+                        System.out.println(e.getMessage());
+                    } catch (UserExistException e) {
+                        System.out.println(e.getMessage());
                     }
                     break;
                 case 0:

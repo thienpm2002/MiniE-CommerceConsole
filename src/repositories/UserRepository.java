@@ -33,4 +33,9 @@ public class UserRepository implements RepositoryInterface<Long, User> {
     public void deleteById(Long id) {
         userDatabase.remove(id);
     }
+
+    public boolean existsByEmail(String email) {
+        return userDatabase.values().stream()
+                .anyMatch(user -> user.getEmail().equalsIgnoreCase(email));
+    }
 }
