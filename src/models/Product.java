@@ -6,8 +6,7 @@ public class Product {
     private double price;
     private int stock;
 
-    public Product(Long id, String name, double price, int stock) {
-        this.id = id;
+    public Product(String name, double price, int stock) {
         this.name = name;
         this.price = price;
         this.stock = stock;
@@ -15,6 +14,10 @@ public class Product {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
