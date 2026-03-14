@@ -1,9 +1,10 @@
 import java.util.Scanner;
 
+import exceptions.ProductNotFoundException;
 import exceptions.UserExistException;
 import exceptions.UserNotFoundException;
-import models.Product;
 import models.User;
+import services.CartService;
 import services.ProductService;
 import services.UserService;
 
@@ -12,6 +13,7 @@ public class App {
         Scanner sc = new Scanner(System.in);
         UserService userService = new UserService();
         ProductService productService = new ProductService();
+        CartService cartService = new CartService(productService);
         int choice;
         do {
             System.out.println("\nWelcome to the Mini E-Commerce Application!");
@@ -53,8 +55,9 @@ public class App {
                             System.out.println("2. Add product");
                             System.out.println("3. View Products");
                             System.out.println("4. Add to Cart");
-                            System.out.println("5. View Cart");
-                            System.out.println("6. Checkout");
+                            System.out.println("5. Remove from Cart");
+                            System.out.println("6. View Cart");
+                            System.out.println("7. Checkout");
                             System.out.println("0. Logout");
                             System.out.print("Enter your choice: ");
                             loginchoice = sc.nextInt();
@@ -98,11 +101,40 @@ public class App {
                                     break;
                                 case 4:
                                     // Code to add to cart
+                                    System.out.print("Enter product ID to add to cart: ");
+                                    Long productId = sc.nextLong();
+                                    System.out.print("Enter quantity: ");
+                                    int quantity = sc.nextInt();
+                                    sc.nextLine();
+                                    try {
+                                        cartService.addToCart(productId, quantity);
+                                        System.out.println("Product added to cart successfully!");
+                                    } catch (IllegalArgumentException e) {
+                                        System.out.println(e.getMessage());
+                                    } catch (IllegalStateException e) {
+                                        System.out.println(e.getMessage());
+                                    }
                                     break;
                                 case 5:
-                                    // Code to view cart
+                                    // Code to remove from cart
+                                    System.out.print("Enter product ID to remove from cart: ");
+                                    Long removeProductId = sc.nextLong();
+                                    sc.nextLine();
+                                    try {
+                                        cartService.removeFromCart(removeProductId);
+                                        System.out.println("Product removed from cart successfully!");
+                                    } catch (IllegalArgumentException e) {
+                                        System.out.println(e.getMessage());
+                                    } catch (ProductNotFoundException e) {
+                                        System.out.println(e.getMessage());
+                                    }
                                     break;
                                 case 6:
+                                    // Code to view cart
+                                    System.out.println("Your Cart:");
+                                    cartService.viewCart();
+                                    break;
+                                case 7:
                                     // Code to checkout
                                     break;
                                 case 0:

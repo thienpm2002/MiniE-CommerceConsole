@@ -29,25 +29,8 @@ public class ProductService {
         productRepository.save(new Product(name, price, stock));
     }
 
-    public void updateStock(Long productId, int stock) {
-        if (stock < 1) {
-            throw new IllegalArgumentException("Stock cannot be less than 1.");
-        }
-
-        if (productId == null || productId <= 0) {
-            throw new IllegalArgumentException("Product ID cannot be null or zero.");
-        }
-
-        Product product = productRepository.findById(productId);
-        if (product == null) {
-            throw new ProductNotFoundException("Product not found with the provided ID.");
-        }
-        int cuurentStock = product.getStock();
-        if (stock > cuurentStock) {
-            throw new IllegalStateException(" Stock quantity cannot be greater than current stock.");
-        }
-        product.setStock(cuurentStock - stock);
-
+    public void updateStock(Product product, int newStock) {
+        product.setStock(newStock);
     }
 
     public List<Product> searchProducts(String name) {
@@ -64,5 +47,13 @@ public class ProductService {
         } else {
             products.forEach(System.out::println);
         }
+    }
+
+    public Product findProductById(Long id) {
+        Product product = productRepository.findById(id);
+        if (product == null) {
+            throw new ProductNotFoundException("Product with ID " + id + " not found.");
+        }
+        return product;
     }
 }
