@@ -2,13 +2,16 @@ import java.util.Scanner;
 
 import exceptions.UserExistException;
 import exceptions.UserNotFoundException;
+import models.Product;
 import models.User;
+import services.ProductService;
 import services.UserService;
 
 public class App {
     public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(System.in);
         UserService userService = new UserService();
+        ProductService productService = new ProductService();
         int choice;
         do {
             System.out.println("\nWelcome to the Mini E-Commerce Application!");
@@ -47,10 +50,11 @@ public class App {
                         int loginchoice;
                         do {
                             System.out.println("1. Deposit money");
-                            System.out.println("2. View Products");
-                            System.out.println("3. Add to Cart");
-                            System.out.println("4. View Cart");
-                            System.out.println("5. Checkout");
+                            System.out.println("2. Add product");
+                            System.out.println("3. View Products");
+                            System.out.println("4. Add to Cart");
+                            System.out.println("5. View Cart");
+                            System.out.println("6. Checkout");
                             System.out.println("0. Logout");
                             System.out.print("Enter your choice: ");
                             loginchoice = sc.nextInt();
@@ -72,15 +76,33 @@ public class App {
                                     }
                                     break;
                                 case 2:
-                                    // Code to view products
+                                    // Code to add product
+                                    System.out.print("Enter product name: ");
+                                    String productName = sc.nextLine();
+                                    System.out.print("Enter product price: ");
+                                    double productPrice = sc.nextDouble();
+                                    System.out.print("Enter product stock: ");
+                                    int productStock = sc.nextInt();
+                                    sc.nextLine();
+                                    try {
+                                        productService.addProduct(productName, productPrice, productStock);
+                                        System.out.println("Product added successfully!");
+                                    } catch (IllegalArgumentException e) {
+                                        System.out.println(e.getMessage());
+                                    }
                                     break;
                                 case 3:
-                                    // Code to add to cart
+                                    // Code to view products
+                                    System.out.println("Available Products:");
+                                    productService.viewProducts();
                                     break;
                                 case 4:
-                                    // Code to view cart
+                                    // Code to add to cart
                                     break;
                                 case 5:
+                                    // Code to view cart
+                                    break;
+                                case 6:
                                     // Code to checkout
                                     break;
                                 case 0:
