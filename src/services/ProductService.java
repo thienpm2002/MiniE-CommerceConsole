@@ -57,7 +57,12 @@ public class ProductService {
         return productRepository.findAll(name);
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public void viewProducts() {
+        List<Product> products = productRepository.findAll();
+        if (products.isEmpty()) {
+            System.out.println("No products available.");
+        } else {
+            products.forEach(System.out::println);
+        }
     }
 }
