@@ -33,4 +33,8 @@ public class ProductRepository implements RepositoryInterface<Long, Product> {
         product.setId(currentId++);
         products.put(product.getId(), product);
     }
+
+    public List<Product> findAll() {
+        return products.values().stream().toList();
+    }
 }
