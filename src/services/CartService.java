@@ -27,24 +27,11 @@ public class CartService {
 
         CartItem existingItem = cartRepository.findCartItemByProductId(productId);
         if (existingItem != null) {
-            Product product = existingItem.getProduct();
-            int stock = product.getStock();
-            int currentQuantity = existingItem.getQuantity();
-            if (stock < quantity) {
-                throw new IllegalStateException("Not enough stock available");
-            }
-            existingItem.setQuantity(currentQuantity + quantity);
-            productService.updateStock(product, stock - quantity);
-
+            existingItem.setQuantity(existingItem.getQuantity() + quantity);
         } else {
             try {
                 Product product = productService.findProductById(productId);
-                int stock = product.getStock();
-                if (stock < quantity) {
-                    throw new IllegalStateException("Not enough stock available");
-                }
                 cartRepository.addCartItem(new CartItem(product, quantity));
-                productService.updateStock(product, stock - quantity);
             } catch (ProductNotFoundException e) {
                 System.out.println(e.getMessage());
             }
@@ -61,8 +48,6 @@ public class CartService {
         if (existingItem == null) {
             throw new ProductNotFoundException("Product with ID " + productId + " not found in cart.");
         }
-        int newStock = existingItem.getProduct().getStock() + existingItem.getQuantity();
-        productService.updateStock(existingItem.getProduct(), newStock);
         cartRepository.removeCartItem(existingItem);
     }
 
@@ -80,11 +65,6 @@ public class CartService {
         if (cartItems.isEmpty()) {
             System.out.println("Your cart is already empty.");
         } else {
-
-            cartItems.forEach(item -> {
-                int newStock = item.getProduct().getStock() + item.getQuantity();
-                productService.updateStock(item.getProduct(), newStock);
-            });
             cartRepository.clearCart();
         }
     }
