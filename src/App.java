@@ -211,12 +211,38 @@ public class App {
                                             System.out.println("Invalid choice. Please try again.");
                                             break;
                                     }
+                                    System.out.println(
+                                            "Your balance is: $" + user.getBalance());
                                     break;
                                 case 10:
                                     // Code to cancel order
+                                    System.out.println("Enter order id: ");
+                                    Long cancelOrderId = sc.nextLong();
+                                    sc.nextLine();
+                                    try {
+                                        orderService.payCancel(cancelOrderId);
+                                        System.out.println("Cancel order width id " + cancelOrderId + " succefully!");
+                                        System.out.println(
+                                                "Your balance is: $" + user.getBalance());
+                                    } catch (IllegalArgumentException e) {
+                                        System.out.println(e.getMessage());
+                                    } catch (IllegalStateException e) {
+                                        System.out.println(e.getMessage());
+                                    }
                                     break;
                                 case 11:
                                     // Code to ship order
+                                    System.out.println("Enter order id: ");
+                                    Long shiporderId = sc.nextLong();
+                                    sc.nextLine();
+                                    try {
+                                        orderService.shipOrder(shiporderId);
+                                        System.out.println("Ship order width id " + shiporderId + " succefully!");
+                                    } catch (IllegalArgumentException e) {
+                                        System.out.println(e.getMessage());
+                                    } catch (IllegalStateException e) {
+                                        System.out.println(e.getMessage());
+                                    }
                                     break;
                                 case 0:
                                     System.out.println("Logged out successfully!");
