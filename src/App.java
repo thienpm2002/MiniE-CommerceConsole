@@ -1,6 +1,8 @@
 
 import java.util.Scanner;
 
+import discount.Discount;
+import discount.PercentageDiscount;
 import exceptions.ProductNotFoundException;
 import exceptions.UserExistException;
 import exceptions.UserNotFoundException;
@@ -20,7 +22,8 @@ public class App {
         UserService userService = new UserService();
         ProductService productService = new ProductService();
         CartService cartService = new CartService(productService);
-        OrderService orderService = new OrderService();
+        Discount discount = new PercentageDiscount(3);
+        OrderService orderService = new OrderService(discount);
         int choice;
         do {
             System.out.println("\nWelcome to the Mini E-Commerce Application!");
@@ -211,6 +214,7 @@ public class App {
                                             System.out.println("Invalid choice. Please try again.");
                                             break;
                                     }
+                                    discount.printDiscount();
                                     System.out.println(
                                             "Your balance is: $" + user.getBalance());
                                     break;
