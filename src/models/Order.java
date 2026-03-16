@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class Order {
 
     public Order(User user, List<CartItem> items) {
         this.user = user;
-        this.items = items;
+        this.items = new ArrayList<>(items);
         this.createdAt = new Date();
         this.status = OrderStatus.CREATED;
     }
@@ -77,8 +78,23 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Order [id=" + id + ", user=" + user + ", totalAmount=" + totalAmount + ", items=" + items
+        return "Order [id=" + id + ", user=" + user.toString() + ", totalAmount=" + totalAmount + ", items="
+                + items.toString()
                 + ", createdAt=" + createdAt + ", status=" + status + "]";
+    }
+
+    public void printOrder() {
+        System.out.println("--------------------------------------------------");
+        System.out.println("Order id: " + id);
+        System.out.println("User: " + user.getName());
+        System.out.println("Item name | Quantity");
+        for (CartItem item : items) {
+            System.out.println(item.getProduct().getName() + "      " + item.getQuantity());
+        }
+        System.out.println("Total: " + totalAmount);
+        System.out.println("Order date: " + createdAt);
+        System.out.println("Status: " + status);
+        System.out.println("--------------------------------------------------");
     }
 
 }

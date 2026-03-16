@@ -40,7 +40,7 @@ public class User {
             throw new IllegalArgumentException("Amount cannot be negative");
         }
         if (balance < amount) {
-            throw new IllegalStateException("Balance cannot be negative");
+            throw new IllegalStateException("Insufficient balance");
         }
         balance -= amount;
     }

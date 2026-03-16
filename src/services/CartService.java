@@ -68,4 +68,9 @@ public class CartService {
             cartRepository.clearCart();
         }
     }
+
+    public List<CartItem> getCartItems() {
+        return cartRepository.getCart();
+    }
+
 }
