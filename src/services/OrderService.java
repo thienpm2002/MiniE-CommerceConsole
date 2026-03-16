@@ -2,6 +2,7 @@ package services;
 
 import java.util.List;
 
+import discount.Discount;
 import models.CartItem;
 import models.Order;
 import models.Product;
@@ -11,9 +12,11 @@ import repositories.OrderRepository;
 
 public class OrderService {
     private OrderRepository orderRepository;
+    private Discount discount;
 
-    public OrderService() {
+    public OrderService(Discount discount) {
         this.orderRepository = new OrderRepository();
+        this.discount = discount;
     }
 
     public void checkOut(User user, List<CartItem> items) {
@@ -21,7 +24,7 @@ public class OrderService {
             throw new IllegalArgumentException("Cart cannot be empty when creating an order.");
         }
         Order order = new Order(user, items);
-        order.calculateTotalAmount();
+        order.calculateTotalAmount(discount);
         orderRepository.save(order);
     }
 
@@ -50,7 +53,7 @@ public class OrderService {
         }
         // Update money user
         User user = order.getUser();
-        double totalAmount = order.getTotalAmount(); // Calculate total amount width discount
+        double totalAmount = order.getTotalAmount();
         paymentMethod.processPayment(user, totalAmount);
         // Update stock
         for (CartItem item : items) {

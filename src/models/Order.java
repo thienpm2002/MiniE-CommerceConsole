@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import discount.Discount;
 import enums.OrderStatus;
 
 public class Order {
@@ -33,10 +34,11 @@ public class Order {
         return user;
     }
 
-    public void calculateTotalAmount() {
-        this.totalAmount = items.stream()
+    public void calculateTotalAmount(Discount discount) {
+        double total = items.stream()
                 .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
                 .sum();
+        totalAmount = discount.applyDiscount(total);
     }
 
     public double getTotalAmount() {
