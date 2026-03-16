@@ -62,4 +62,26 @@ public class OrderService {
         order.pay();
     }
 
+    public void payCancel(Long orderId) {
+        Order order = orderRepository.findById(orderId);
+        if (order == null) {
+            throw new IllegalArgumentException("Order with ID " + orderId + " not found.");
+        }
+        User user = order.getUser();
+        double totalAmount = order.getTotalAmount();
+
+        user.deposit(totalAmount);
+
+        order.cancel();
+
+    }
+
+    public void shipOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId);
+        if (order == null) {
+            throw new IllegalArgumentException("Order with ID " + orderId + " not found.");
+        }
+        order.ship();
+    }
+
 }
