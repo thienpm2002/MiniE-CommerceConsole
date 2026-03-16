@@ -1,10 +1,16 @@
+
 import java.util.Scanner;
 
 import exceptions.ProductNotFoundException;
 import exceptions.UserExistException;
 import exceptions.UserNotFoundException;
 import models.User;
+import payment.CreditCardPayment;
+import payment.Payment;
+import payment.PaypalPayment;
+import payment.WalletPayment;
 import services.CartService;
+import services.OrderService;
 import services.ProductService;
 import services.UserService;
 
@@ -14,6 +20,7 @@ public class App {
         UserService userService = new UserService();
         ProductService productService = new ProductService();
         CartService cartService = new CartService(productService);
+        OrderService orderService = new OrderService();
         int choice;
         do {
             System.out.println("\nWelcome to the Mini E-Commerce Application!");
@@ -58,6 +65,10 @@ public class App {
                             System.out.println("5. Remove from Cart");
                             System.out.println("6. View Cart");
                             System.out.println("7. Checkout");
+                            System.out.println("8. View Orders");
+                            System.out.println("9. Pay Order");
+                            System.out.println("10. Cancel Order");
+                            System.out.println("11. Ship Order");
                             System.out.println("0. Logout");
                             System.out.print("Enter your choice: ");
                             loginchoice = sc.nextInt();
@@ -136,6 +147,76 @@ public class App {
                                     break;
                                 case 7:
                                     // Code to checkout
+                                    try {
+                                        orderService.checkOut(user, cartService.getCartItems());
+                                        System.out.println("Checkout successful! Your order has been placed.");
+                                        cartService.clearCart();
+                                    } catch (IllegalArgumentException e) {
+                                        System.out.println(e.getMessage());
+                                    }
+                                    break;
+                                case 8:
+                                    // Code to view orders
+                                    System.out.println("Your Orders:");
+                                    orderService.viewOrders();
+                                    break;
+                                case 9:
+                                    // Code to pay order
+                                    System.out.println("Enter order id: ");
+                                    Long orderId = sc.nextLong();
+                                    sc.nextLine();
+                                    System.out.println("Enter pay method");
+                                    System.out.println("1. Credit Card");
+                                    System.out.println("2. Paypal Payment");
+                                    System.out.println("3. Wallet Payment");
+                                    System.out.println("0. Cancel");
+                                    System.out.println("Enter choice: ");
+                                    int choiceMethod = sc.nextInt();
+                                    sc.nextLine();
+                                    switch (choiceMethod) {
+                                        case 1:
+                                            try {
+                                                Payment creditCard = new CreditCardPayment();
+                                                orderService.payOrder(orderId, creditCard);
+                                            } catch (IllegalArgumentException e) {
+                                                System.out.println(e.getMessage());
+                                            } catch (IllegalStateException s) {
+                                                System.out.println(s.getMessage());
+                                            }
+                                            break;
+                                        case 2:
+                                            try {
+                                                Payment paypal = new PaypalPayment();
+                                                orderService.payOrder(orderId, paypal);
+                                            } catch (IllegalArgumentException e) {
+                                                System.out.println(e.getMessage());
+                                            } catch (IllegalStateException s) {
+                                                System.out.println(s.getMessage());
+                                            }
+                                            break;
+                                        case 3:
+                                            try {
+                                                Payment wallet = new WalletPayment();
+                                                orderService.payOrder(orderId, wallet);
+                                            } catch (IllegalArgumentException e) {
+                                                System.out.println(e.getMessage());
+                                            } catch (IllegalStateException s) {
+                                                System.out.println(s.getMessage());
+                                            }
+                                            break;
+                                        case 0:
+                                            System.out.println("Cancel payment");
+                                            break;
+                                        default:
+                                            System.out.println("Invalid choice. Please try again.");
+                                            break;
+                                    }
+                                    break;
+                                case 10:
+                                    // Code to cancel order
+                                    break;
+                                case 11:
+                                    // Code to ship order
                                     break;
                                 case 0:
                                     System.out.println("Logged out successfully!");
