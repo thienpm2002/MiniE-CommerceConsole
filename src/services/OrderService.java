@@ -26,6 +26,7 @@ public class OrderService {
         Order order = new Order(user, items);
         order.calculateTotalAmount(discount);
         orderRepository.save(order);
+        orderRepository.writeToFile();
     }
 
     public void viewOrders() {
@@ -63,6 +64,7 @@ public class OrderService {
         }
         // Set status order
         order.pay();
+        orderRepository.writeToFile();
     }
 
     public void payCancel(Long orderId) {
@@ -76,7 +78,7 @@ public class OrderService {
         user.deposit(totalAmount);
 
         order.cancel();
-
+        orderRepository.writeToFile();
     }
 
     public void shipOrder(Long orderId) {
@@ -85,6 +87,7 @@ public class OrderService {
             throw new IllegalArgumentException("Order with ID " + orderId + " not found.");
         }
         order.ship();
+        orderRepository.writeToFile();
     }
 
 }
