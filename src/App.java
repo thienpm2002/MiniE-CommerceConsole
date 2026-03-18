@@ -7,14 +7,13 @@ import exceptions.ProductNotFoundException;
 import exceptions.UserExistException;
 import exceptions.UserNotFoundException;
 import models.User;
-import payment.CreditCardPayment;
 import payment.Payment;
-import payment.PaypalPayment;
-import payment.WalletPayment;
+import payment.PaymentMethod;
 import services.CartService;
 import services.OrderService;
 import services.ProductService;
 import services.UserService;
+import utils.Logger;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -45,10 +44,16 @@ public class App {
                     try {
                         userService.registerUser(name, email, balance);
                         System.out.println("User registered successfully!");
+                        Logger registerInfo = new Logger("User with email: " + email + " register succefully",
+                                userService.getClass().getSimpleName());
+                        registerInfo.LogInfo();
                     } catch (IllegalArgumentException e) {
                         System.out.println(e.getMessage());
                     } catch (UserExistException e) {
                         System.out.println(e.getMessage());
+                        Logger registerError = new Logger("Register fail: " + e.getMessage(),
+                                userService.getClass().getSimpleName());
+                        registerError.LogError();
                     }
                     break;
                 case 2:
@@ -59,6 +64,9 @@ public class App {
                         System.out.println("Login successful!");
                         System.out
                                 .println("Hi, " + user.getName() + "! Your current balance is: $" + user.getBalance());
+                        Logger loginInfo = new Logger("User with email: " + loginEmail + " login succefully",
+                                userService.getClass().getSimpleName());
+                        loginInfo.LogInfo();
                         int loginchoice;
                         do {
                             System.out.println("1. Deposit money");
@@ -88,6 +96,11 @@ public class App {
                                         userService.depositMoney(user, amount);
                                         System.out.println(
                                                 "Deposit successful! Your new balance is: $" + user.getBalance());
+                                        Logger depositInfo = new Logger(
+                                                "User width email: " + user.getEmail() + " deposit money " + amount
+                                                        + " $ succefully",
+                                                userService.getClass().getSimpleName());
+                                        depositInfo.LogInfo();
                                     } catch (IllegalArgumentException e) {
                                         System.out.println(e.getMessage());
                                     }
@@ -154,6 +167,9 @@ public class App {
                                         orderService.checkOut(user, cartService.getCartItems());
                                         System.out.println("Checkout successful! Your order has been placed.");
                                         cartService.clearCart();
+                                        Logger checkOutLog = new Logger("Checkout success for user: " + user.getEmail(),
+                                                orderService.getClass().getSimpleName());
+                                        checkOutLog.LogInfo();
                                     } catch (IllegalArgumentException e) {
                                         System.out.println(e.getMessage());
                                     }
@@ -168,55 +184,51 @@ public class App {
                                     System.out.println("Enter order id: ");
                                     Long orderId = sc.nextLong();
                                     sc.nextLine();
+
                                     System.out.println("Enter pay method");
                                     System.out.println("1. Credit Card");
                                     System.out.println("2. Paypal Payment");
                                     System.out.println("3. Wallet Payment");
                                     System.out.println("0. Cancel");
-                                    System.out.println("Enter choice: ");
+                                    System.out.print("Enter choice: ");
+
                                     int choiceMethod = sc.nextInt();
                                     sc.nextLine();
-                                    switch (choiceMethod) {
-                                        case 1:
-                                            try {
-                                                Payment creditCard = new CreditCardPayment();
-                                                orderService.payOrder(orderId, creditCard);
-                                            } catch (IllegalArgumentException e) {
-                                                System.out.println(e.getMessage());
-                                            } catch (IllegalStateException s) {
-                                                System.out.println(s.getMessage());
-                                            }
-                                            break;
-                                        case 2:
-                                            try {
-                                                Payment paypal = new PaypalPayment();
-                                                orderService.payOrder(orderId, paypal);
-                                            } catch (IllegalArgumentException e) {
-                                                System.out.println(e.getMessage());
-                                            } catch (IllegalStateException s) {
-                                                System.out.println(s.getMessage());
-                                            }
-                                            break;
-                                        case 3:
-                                            try {
-                                                Payment wallet = new WalletPayment();
-                                                orderService.payOrder(orderId, wallet);
-                                            } catch (IllegalArgumentException e) {
-                                                System.out.println(e.getMessage());
-                                            } catch (IllegalStateException s) {
-                                                System.out.println(s.getMessage());
-                                            }
-                                            break;
-                                        case 0:
-                                            System.out.println("Cancel payment");
-                                            break;
-                                        default:
+
+                                    Payment payment = PaymentMethod.getPaymentMethod(choiceMethod);
+
+                                    if (payment == null) {
+                                        if (choiceMethod != 0) {
                                             System.out.println("Invalid choice. Please try again.");
-                                            break;
+                                        } else {
+                                            System.out.println("Cancel payment");
+                                        }
+                                        break;
                                     }
-                                    discount.printDiscount();
-                                    System.out.println(
-                                            "Your balance is: $" + user.getBalance());
+
+                                    try {
+                                        orderService.payOrder(orderId, payment);
+
+                                        System.out.println("Payment successful!");
+                                        System.out.println("Your balance is: $" + user.getBalance());
+
+                                        Logger payLog = new Logger(
+                                                "User: " + user.getEmail() + " paid order " + orderId + " successfully",
+                                                orderService.getClass().getSimpleName());
+                                        payLog.LogInfo();
+
+                                    } catch (IllegalArgumentException e) {
+                                        System.out.println(e.getMessage());
+
+                                    } catch (IllegalStateException e) {
+                                        System.out.println(e.getMessage());
+
+                                        Logger statusOrderError = new Logger(
+                                                "Pay order failed: " + e.getMessage(),
+                                                orderService.getClass().getSimpleName());
+                                        statusOrderError.LogError();
+                                    }
+
                                     break;
                                 case 10:
                                     // Code to cancel order
@@ -228,10 +240,18 @@ public class App {
                                         System.out.println("Cancel order width id " + cancelOrderId + " succefully!");
                                         System.out.println(
                                                 "Your balance is: $" + user.getBalance());
+                                        Logger cancelOrderLog = new Logger(
+                                                "User: " + user.getEmail() + " cancel order " + cancelOrderId
+                                                        + " succefully",
+                                                orderService.getClass().getSimpleName());
+                                        cancelOrderLog.LogInfo();
                                     } catch (IllegalArgumentException e) {
                                         System.out.println(e.getMessage());
                                     } catch (IllegalStateException e) {
                                         System.out.println(e.getMessage());
+                                        Logger statusOrderError = new Logger("Cancel order false: " + e.getMessage(),
+                                                orderService.getClass().getSimpleName());
+                                        statusOrderError.LogError();
                                     }
                                     break;
                                 case 11:
@@ -242,10 +262,18 @@ public class App {
                                     try {
                                         orderService.shipOrder(shiporderId);
                                         System.out.println("Ship order width id " + shiporderId + " succefully!");
+                                        Logger shipOrderLog = new Logger(
+                                                "User: " + user.getEmail() + " ship order " + shiporderId
+                                                        + " succefully",
+                                                orderService.getClass().getName());
+                                        shipOrderLog.LogInfo();
                                     } catch (IllegalArgumentException e) {
                                         System.out.println(e.getMessage());
                                     } catch (IllegalStateException e) {
                                         System.out.println(e.getMessage());
+                                        Logger statusOrderError = new Logger("Ship order false: " + e.getMessage(),
+                                                orderService.getClass().getSimpleName());
+                                        statusOrderError.LogError();
                                     }
                                     break;
                                 case 0:
@@ -259,6 +287,9 @@ public class App {
                         System.out.println(e.getMessage());
                     } catch (UserNotFoundException e) {
                         System.out.println(e.getMessage());
+                        Logger loginError = new Logger("Login fail: " + e.getMessage(),
+                                userService.getClass().getSimpleName());
+                        loginError.LogError();
                     }
                     break;
                 case 0:
