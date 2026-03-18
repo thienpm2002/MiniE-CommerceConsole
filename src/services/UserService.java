@@ -21,7 +21,7 @@ public class UserService {
             throw new IllegalArgumentException("Invalid email format.");
         }
         if (userRepository.existsByEmail(email)) {
-            throw new UserExistException("Email already exists. Please use a different email.");
+            throw new UserExistException("Email " + email + " already exists.");
         }
         if (balance < 0) {
             throw new IllegalArgumentException("Balance cannot be negative.");
@@ -35,7 +35,7 @@ public class UserService {
             throw new IllegalArgumentException("Invalid email format.");
         }
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found with the provided email."));
+                .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found."));
     }
 
     public void depositMoney(User user, double amount) {
